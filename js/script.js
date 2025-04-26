@@ -230,7 +230,7 @@ document.getElementById("btnBuscar").addEventListener("click", function () {
     return;
   }
 
-  fetch('https://script.google.com/macros/s/AKfycbwwBQ6QrMJ_eaemOcy8JGWbxmzK5bHPmR5bTPUQ8XdCtsVQtzM9LvRH_7X3__SybmKyYQ/exec')  // 🔥 URL de la WebApp que creamos recién
+  fetch('https://script.google.com/macros/s/AKfycbzJ4PEEjOUeFYr4KQTO2kK5v6eDyy-ovC7loXcUMnbWeXPZVQLYg1Fv_T97LnNdO8MUxg/exec')  
     .then(response => response.json())
     .then(clientes => {
       const clienteEncontrado = clientes.find(cliente => cliente.dni === dniIngresado);
