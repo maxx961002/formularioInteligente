@@ -1,100 +1,118 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FomularioLaYema</title>
-    <link rel="stylesheet" href="./css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FomularioLaYema</title>
+  <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
-    <h1>Reserva tu estadía en Complejo La Yema</h1>
-    <p>¿Ya sos cliente?</p>
-  
-    <!-- Botones de selección -->
-    <div id="opciones">
-      <button id="btnNuevo">Es mi primera vez</button>
-      <button id="btnExistente">Ya soy cliente</button>
-    </div>
-  
-    <!-- Formulario cliente existente (empieza oculto) -->
-    <div id="formExistente" style="display: none;">
-      <h2>Buscar cliente</h2>
-      <label for="dniExistente">DNI:</label>
-      <input type="number" id="dniExistente" name="dniExistente" required />
-      <button id="btnBuscar">Buscar</button>
-  
-      <div id="formReservaExistente" style="display: none;">
-        <!-- Este bloque aparece si el cliente EXISTE -->
-        <p id="saludoCliente"></p>
-        <!-- Acá vamos a meter los campos de reserva luego -->
-      </div>
-  
-      <div id="formCompletoDesdeExistente" style="display: none;">
-        <!-- Este aparece si el DNI NO existe (nuevo cliente camuflado) -->
-        <h3>No estás registrado. Te sumamos ahora:</h3>
-        <!-- Acá se reutiliza el formulario completo -->
-      </div>
-    </div>
-  
-    <!-- Formulario cliente nuevo (empieza oculto) -->
-    <div id="formNuevo" style="display: none;">
-      <h2>Registro de nuevo cliente</h2>
-      <form id="formularioNuevoCliente">
+  <h1>Reserva tu estadía en Complejo La Yema</h1>
+  <p>¿Ya sos cliente?</p>
 
-        <label for="nombre">Nombre completo:</label>
-        <input type="text" id="nombre" name="nombre" required>
-      
-        <label for="localidad">Localidad:</label>
-        <input type="text" id="localidad" name="localidad" required>
-      
-        <label for="dni">DNI:</label>
-        <input type="number" id="dni" name="dni" required>
-      
-        <label for="telefono">Teléfono:</label>
-        <input type="tel" id="telefono" name="telefono" required>
-      
-        <label for="unidad">Unidad a reservar:</label>
-        <select id="unidad" name="unidad" required>
-          <option value="">Seleccionar unidad</option>
-          <option value="Loft 2 personas">Loft 2 personas</option>
-          <option value="Loft 3 y 4 personas">Loft 3 y 4 personas</option>
-          <option value="Cabaña 2 y 3 personas">Cabaña 2 y 3 personas</option>
-          <option value="Departamento 4 y 5 personas">Departamento 4 y 5 personas</option>
-          <option value="Cabaña hasta 8 personas">Cabaña hasta 8 personas</option>
-          <option value="Habitación Sorelle">Habitación Sorelle</option>
-        </select>
-      
-        <label for="personas">Cantidad de personas:</label>
-        <input type="number" id="personas" name="personas" required>
-      
-        <label for="fechaIngreso">Fecha de ingreso:</label>
-        <input type="date" id="fechaIngreso" name="fechaIngreso" required>
-      
-        <label for="fechaEgreso">Fecha de egreso:</label>
-        <input type="date" id="fechaEgreso" name="fechaEgreso" required>
-      
-        <label for="retiro">Horario de salida:</label>
-        <select id="retiro" name="retiro" required>
-          <option value="">Seleccionar horario</option>
-          <option value="10:00 HS (no tiene recargo)">10:00 HS (no tiene recargo)</option>
-          <option value="18:00 HS (recargo extra)">18:00 HS (recargo extra)</option>
-        </select>
-      
-        <label for="extra">¿Algo que debamos saber?</label>
-        <select id="extra" name="extra" required>
-          <option value="">Seleccionar opción</option>
-          <option value="Desayuno sin TACC">Desayuno sin TACC</option>
-          <option value="Camas separadas">Camas separadas</option>
-          <option value="Check-in a coordinar">Check-in a coordinar</option>
-          <option value="Nada que agregar">Nada que agregar</option>
-        </select>
-      
-        <button type="submit">Enviar reserva</button>
-      
-      </form>
-      
+  <!-- Botones de selección -->
+  <div id="opciones">
+    <button id="botonPrimeraVez">Es mi primera vez</button>
+    <button id="botonYaCliente">Ya soy cliente</button>
+
+  </div>
+
+  <!-- Formulario cliente existente (empieza oculto) -->
+  <div id="formExistente" style="display: none;">
+    <h2>Buscar cliente</h2>
+    <label for="dniExistente">DNI:</label>
+    <input type="number" id="dniExistente" name="dniExistente" required />
+    <button id="btnBuscar">Buscar</button>
+
+    <div id="formReservaExistente" style="display: none;">
+      <!-- Este bloque aparece si el cliente EXISTE -->
+      <p id="saludoCliente"></p>
+      <!-- Acá vamos a meter los campos de reserva luego -->
     </div>
 
-    <script src="./js/script.js"></script>
+    <div id="formCompletoDesdeExistente" style="display: none;">
+      <!-- Este aparece si el DNI NO existe (nuevo cliente camuflado) -->
+      <h3>No estás registrado. Te sumamos ahora:</h3>
+      <!-- Acá se reutiliza el formulario completo -->
+    </div>
+  </div>
+
+  <!-- Formulario cliente nuevo (empieza oculto) -->
+  <div id="formNuevo" style="display: none;">
+    <h2>Registro de nuevo cliente</h2>
+    <form id="formularioNuevoCliente">
+  
+      <label for="nombre">Nombre completo:</label>
+      <input type="text" id="nombre" name="nombre" required>
+  
+      <label for="localidad">Localidad:</label>
+      <input type="text" id="localidad" name="localidad" required>
+  
+      <label for="dni">DNI:</label>
+      <input type="number" id="dni" name="dni" required>
+  
+      <label for="paisCodigo">País / Código:</label>
+      <div style="display: flex; gap: 5px; align-items: center;">
+        <select id="paisCodigo" name="paisCodigo" required>
+          <option value="+54">Argentina (+54)</option>
+          <option value="+598">Uruguay (+598)</option>
+          <option value="+55">Brasil (+55)</option>
+          <option value="+56">Chile (+56)</option>
+          <option value="+595">Paraguay (+595)</option>
+          <option value="+591">Bolivia (+591)</option>
+          <option value="otro">Otro</option>
+        </select>
+        <input type="text" id="codigoPersonalizado" name="codigoPersonalizado" placeholder="Código" style="display: none; width: 60px;">
+      </div>
+  
+      <label for="telefono">Teléfono:</label>
+      <input type="tel" id="telefono" name="telefono" required>
+  
+      <label for="unidad">Unidad a reservar:</label>
+      <select id="unidad" name="unidad" required>
+        <option value="">Seleccionar unidad</option>
+        <option value="Loft 2 personas">Loft 2 personas</option>
+        <option value="Loft 3 y 4 personas">Loft 3 y 4 personas</option>
+        <option value="Cabaña 2 y 3 personas">Cabaña 2 y 3 personas</option>
+        <option value="Departamento 4 y 5 personas">Departamento 4 y 5 personas</option>
+        <option value="Cabaña hasta 8 personas">Cabaña hasta 8 personas</option>
+        <option value="Habitación Sorelle">Habitación Sorelle</option>
+      </select>
+  
+      <label for="personas">Cantidad de personas:</label>
+      <input type="number" id="personas" name="personas" required>
+  
+      <label for="fechaIngreso">Fecha de ingreso:</label>
+      <input type="date" id="fechaIngreso" name="fechaIngreso" required>
+  
+      <label for="fechaEgreso">Fecha de egreso:</label>
+      <input type="date" id="fechaEgreso" name="fechaEgreso" required>
+  
+      <label for="retiro">Horario de salida:</label>
+      <select id="retiro" name="retiro" required>
+        <option value="">Seleccionar horario</option>
+        <option value="10:00 HS (no tiene recargo)">10:00 HS (no tiene recargo)</option>
+        <option value="18:00 HS (recargo extra)">18:00 HS (recargo extra)</option>
+      </select>
+  
+      <label for="extra">¿Algo que debamos saber?</label>
+      <select id="extra" name="extra" required>
+        <option value="">Seleccionar opción</option>
+        <option value="Desayuno sin TACC">Desayuno sin TACC</option>
+        <option value="Camas separadas">Camas separadas</option>
+        <option value="Check-in a coordinar">Check-in a coordinar</option>
+        <option value="Nada que agregar">Nada que agregar</option>
+      </select>
+  
+      <button type="submit">Enviar reserva</button>
+  
+    </form>
+
+  </div>
+
+  <script src="./js/script.js"></script>
 </body>
+
 </html>
