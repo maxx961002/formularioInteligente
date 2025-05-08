@@ -5,12 +5,27 @@
 function mostrarFormularioNuevo() {
   document.getElementById("formNuevo").style.display = "block";
   document.getElementById("formExistente").style.display = "none";
+  document.getElementById("formReservaExistente").style.display = "none";
+
+  // Asegura que se actualicen las opciones del select extra para nuevo cliente
+  const unidadNueva = document.getElementById("unidad").value;
+  const extraNueva = document.getElementById("extra");
+  actualizarOpcionesExtra(unidadNueva, extraNueva);
 }
 
 function mostrarFormularioExistente() {
   document.getElementById("formExistente").style.display = "block";
   document.getElementById("formNuevo").style.display = "none";
+  document.getElementById("formReservaExistente").style.display = "none";
+
+  const unidadExistente = document.getElementById("unidadExistente").value;
+  const extraExistente = document.getElementById("extraExistente");
+  actualizarOpcionesExtra(unidadExistente, extraExistente);
 }
+
+4
+let clienteEncontrado = null; // Variable global
+
 
 // =============================
 //         EVENTOS
@@ -22,7 +37,7 @@ document.getElementById('botonYaCliente').addEventListener('click', mostrarFormu
 document.getElementById("formularioNuevoCliente").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  if (validarFormulario()) {
+  if (validarFormulario("nuevo")) {
     const datos = {
       nombre: document.getElementById("nombre").value.trim(),
       localidad: document.getElementById("localidad").value.trim(),
@@ -40,6 +55,23 @@ document.getElementById("formularioNuevoCliente").addEventListener("submit", fun
   }
 });
 
+document.getElementById("formularioReservaExistente").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  if (validarFormulario("existente")) {
+    const datosReserva = {
+      unidad: document.getElementById("unidadExistente").value.trim(),
+      personas: document.getElementById("personasExistente").value.trim(),
+      fechaIngreso: document.getElementById("fechaIngresoExistente").value,
+      fechaEgreso: document.getElementById("fechaEgresoExistente").value,
+      retiro: document.getElementById("retiroExistente").value.trim(),
+      extra: document.getElementById("extraExistente").value.trim()
+    };
+
+    enviarDatosReservaExistente(datosReserva);
+  }
+});
+
 // =============================
 //     ENVIAR A GOOGLE SHEETS
 // =============================
@@ -53,9 +85,9 @@ function enviarDatosFormulario(datos) {
     .then(response => response.json())
     .then(data => {
       if (data.status === "ok") {
-        alert("✅ ¡Datos enviados correctamente! Te estaremos confirmando por WhatsApp.");
-        document.getElementById("formularioNuevoCliente").reset();
-      } else {
+        mostrarModalConfirmacion();
+      }
+       else {
         alert("❌ Error al enviar datos: " + data.mensaje);
       }
     })
@@ -64,160 +96,7 @@ function enviarDatosFormulario(datos) {
     });
 }
 
-// =============================
-//    VALIDACIONES EN VIVO
-// =============================
 
-// Auxiliar para crear campos de error
-function crearCampoError(inputElement, id) {
-  const error = document.createElement("small");
-  error.style.color = "red";
-  error.id = id;
-  inputElement.parentNode.insertBefore(error, inputElement.nextSibling);
-  return error;
-}
-
-// Validar cantidad de personas en vivo
-document.getElementById("unidad").addEventListener("change", actualizarCantidadPersonas);
-document.getElementById("unidad").addEventListener("change", actualizarOpcionesExtra);
-document.getElementById("personas").addEventListener("input", validarCantidadPersonas);
-document.getElementById("dni").addEventListener("input", validarDNI);
-document.getElementById("telefono").addEventListener("input", validarTelefono);
-document.getElementById("fechaIngreso").addEventListener("change", validarFechaIngreso);
-document.getElementById("fechaEgreso").addEventListener("change", validarFechaEgreso);
-
-// Actualizar cantidad personas según unidad
-function actualizarCantidadPersonas() {
-  const unidadSeleccionada = document.getElementById("unidad").value;
-  const inputPersonas = document.getElementById("personas");
-
-  let minPersonas = 1;
-  let maxPersonas = 8;
-
-  switch (unidadSeleccionada) {
-    case "Loft 2 personas": minPersonas = 1; maxPersonas = 2; break;
-    case "Loft 3 y 4 personas": minPersonas = 3; maxPersonas = 4; break;
-    case "Cabaña 2 y 3 personas": minPersonas = 1; maxPersonas = 3; break;
-    case "Departamento 4 y 5 personas": minPersonas = 2; maxPersonas = 5; break;
-    case "Cabaña hasta 8 personas": minPersonas = 5; maxPersonas = 8; break;
-    case "Habitación Sorelle": minPersonas = 1; maxPersonas = 3; break;
-  }
-
-  inputPersonas.min = minPersonas;
-  inputPersonas.max = maxPersonas;
-}
-
-// Validar cantidad de personas
-function validarCantidadPersonas() {
-  const unidad = document.getElementById("unidad").value;
-  const personas = parseInt(document.getElementById("personas").value);
-  const inputPersonas = document.getElementById("personas");
-  const errorField = document.getElementById("errorPersonas") || crearCampoError(inputPersonas, "errorPersonas");
-
-  let min = 1;
-  let max = 8;
-
-  switch (unidad) {
-    case "Loft 2 personas": min = 1; max = 2; break;
-    case "Loft 3 y 4 personas": min = 3; max = 4; break;
-    case "Cabaña 2 y 3 personas": min = 1; max = 3; break;
-    case "Departamento 4 y 5 personas": min = 2; max = 5; break;
-    case "Cabaña hasta 8 personas": min = 5; max = 8; break;
-    case "Habitación Sorelle": min = 1; max = 3; break;
-  }
-
-  if (isNaN(personas) || personas < min || personas > max) {
-    inputPersonas.style.border = "2px solid red";
-    errorField.innerText = `La unidad ${unidad} admite entre ${min} y ${max} personas.`;
-  } else {
-    inputPersonas.style.border = "2px solid green";
-    errorField.innerText = "";
-  }
-}
-
-// Validar DNI en vivo
-function validarDNI() {
-  const inputDni = document.getElementById("dni");
-  const dni = inputDni.value.trim();
-  const errorField = document.getElementById("errorDNI") || crearCampoError(inputDni, "errorDNI");
-
-  if (dni.length < 7 || dni.length > 9) {
-    inputDni.style.border = "2px solid red";
-    errorField.innerText = "El DNI debe tener entre 7 y 9 dígitos.";
-  } else {
-    inputDni.style.border = "2px solid green";
-    errorField.innerText = "";
-  }
-}
-// VALIDAR TELEFONO EN VIVO//
-
-document.getElementById("paisCodigo").addEventListener("change", function () {
-  const select = document.getElementById("paisCodigo");
-  const inputCodigo = document.getElementById("codigoPersonalizado");
-
-  if (select.value === "otro") {
-    inputCodigo.style.display = "inline-block";
-    inputCodigo.required = true;
-  } else {
-    inputCodigo.style.display = "none";
-    inputCodigo.required = false;
-    inputCodigo.value = "";
-  }
-});
-
-// EVENTO PARA ENVIAR FORMULARIO
-document.getElementById("formularioNuevoCliente").addEventListener("submit", function (e) {})
-
-// Validar Teléfono en vivo
-function validarTelefono() {
-  const inputTel = document.getElementById("telefono");
-  const tel = inputTel.value.trim();
-  const errorField = document.getElementById("errorTelefono") || crearCampoError(inputTel, "errorTelefono");
-
-  if (tel.length < 10) {
-    inputTel.style.border = "2px solid red";
-    errorField.innerText = "El teléfono debe tener al menos 10 dígitos.";
-  } else {
-    inputTel.style.border = "2px solid green";
-    errorField.innerText = "";
-  }
-}
-
-// Validar Fecha Ingreso
-function validarFechaIngreso() {
-  const inputIngreso = document.getElementById("fechaIngreso");
-  const fechaIngreso = new Date(inputIngreso.value + "T00:00:00");
-  const hoy = new Date();
-  hoy.setHours(0,0,0,0);
-  const errorField = document.getElementById("errorFechaIngreso") || crearCampoError(inputIngreso, "errorFechaIngreso");
-
-  if (fechaIngreso < hoy) {
-    inputIngreso.style.border = "2px solid red";
-    errorField.innerText = "La fecha de ingreso debe ser hoy o posterior.";
-  } else {
-    inputIngreso.style.border = "2px solid green";
-    errorField.innerText = "";
-  }
-}
-
-// Validar Fecha Egreso
-function validarFechaEgreso() {
-  const inputIngreso = document.getElementById("fechaIngreso");
-  const inputEgreso = document.getElementById("fechaEgreso");
-
-  const fechaIngreso = new Date(inputIngreso.value + "T00:00:00");
-  const fechaEgreso = new Date(inputEgreso.value + "T00:00:00");
-
-  const errorField = document.getElementById("errorFechaEgreso") || crearCampoError(inputEgreso, "errorFechaEgreso");
-
-  if (fechaEgreso <= fechaIngreso) {
-    inputEgreso.style.border = "2px solid red";
-    errorField.innerText = "La fecha de egreso debe ser posterior a la de ingreso.";
-  } else {
-    inputEgreso.style.border = "2px solid green";
-    errorField.innerText = "";
-  }
-}
 // =============================
 //     FORMULARIO CLIENTES
 // =============================
@@ -233,7 +112,7 @@ document.getElementById("btnBuscar").addEventListener("click", function () {
   fetch('https://script.google.com/macros/s/AKfycbzJ4PEEjOUeFYr4KQTO2kK5v6eDyy-ovC7loXcUMnbWeXPZVQLYg1Fv_T97LnNdO8MUxg/exec')  
     .then(response => response.json())
     .then(clientes => {
-      const clienteEncontrado = clientes.find(cliente => cliente.dni === dniIngresado);
+      clienteEncontrado = clientes.find(cliente => cliente.dni === dniIngresado);
 
       if (clienteEncontrado) {
         // ✅ Si el cliente EXISTE
@@ -241,15 +120,13 @@ document.getElementById("btnBuscar").addEventListener("click", function () {
           `Hola ${clienteEncontrado.nombre}, nos alegra hospedarte nuevamente.`;
 
         document.getElementById("formReservaExistente").style.display = "block";
-        document.getElementById("formCompletoDesdeExistente").style.display = "none";
 
         // Acá después vamos a armar los campos para reservar directamente
       } else {
-        // ❌ Si NO existe
-        alert("No encontramos tu DNI. Te registraremos como nuevo cliente.");
-        document.getElementById("formCompletoDesdeExistente").style.display = "block";
-        document.getElementById("formReservaExistente").style.display = "none";
+        mostrarModalNoEncontrado();
+        reiniciarVista
       }
+      
     })
     .catch(error => {
       console.error("Error al buscar el cliente:", error);
@@ -257,17 +134,332 @@ document.getElementById("btnBuscar").addEventListener("click", function () {
     });
 });
 
+// =============================
+//     ENVIAR RESERVA CLIENTE EXISTENTE
+// =============================
+
+// Enviar datos a la hoja de respuestas
+function enviarDatosReservaExistente(datosReserva) {
+  if (!clienteEncontrado) {
+    alert("Error: No hay cliente cargado.");
+    return;
+  }
+
+  const datosCompletos = {
+    nombre: clienteEncontrado.nombre,
+    localidad: clienteEncontrado.localidad,
+    dni: clienteEncontrado.dni,
+    telefono: clienteEncontrado.telefono,
+    unidad: datosReserva.unidad,
+    personas: datosReserva.personas,
+    fechaIngreso: datosReserva.fechaIngreso,
+    fechaEgreso: datosReserva.fechaEgreso,
+    retiro: datosReserva.retiro,
+    extra: datosReserva.extra
+  };
+
+  fetch('https://script.google.com/macros/s/AKfycbwwBQ6QrMJ_eaemOcy8JGWbxmzK5bHPmR5bTPUQ8XdCtsVQtzM9LvRH_7X3__SybmKyYQ/exec', {
+    method: 'POST',
+    contentType: 'application/json',
+    body: JSON.stringify(datosCompletos)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === "ok") {
+      mostrarModalConfirmacion();
+    }    
+     else {
+      alert("❌ Error al enviar la reserva: " + data.mensaje);
+    }
+  })
+  .catch(error => {
+    alert("❌ Error de red al enviar reserva: " + error);
+  });
+}
 
 // =============================
 //     OPCIONES EXTRAS
 // =============================
 
-function actualizarOpcionesExtra() {
-  const unidadSeleccionada = document.getElementById("unidad").value;
-  const selectExtra = document.getElementById("extra");
-
+function actualizarOpcionesExtra(unidadSeleccionada, selectExtra) {
+  // Mostrar todas las opciones primero
   for (let i = 0; i < selectExtra.options.length; i++) {
     selectExtra.options[i].style.display = "block";
+  }
+
+  // Unidades que SÍ permiten camas separadas
+  const unidadesConCamasSeparadas = [
+    "Loft 2 personas",
+    "Loft 3 y 4 personas",
+    "Departamento 4 y 5 personas"
+  ];
+
+  // Si la unidad no está en la lista, ocultamos "Camas separadas"
+  if (!unidadesConCamasSeparadas.includes(unidadSeleccionada)) {
+    for (let i = 0; i < selectExtra.options.length; i++) {
+      if (selectExtra.options[i].value === "Camas separadas") {
+        selectExtra.options[i].style.display = "none";
+      }
+    }
+
+    // También quitamos esa opción si ya estaba seleccionada
+    if (selectExtra.value === "Camas separadas") {
+      selectExtra.value = "";
+    }
+  }
+}
+
+
+// =============================
+//   VALIDACIONES EN VIVO: NUEVO CLIENTE
+// =============================
+
+// Validar Nombre en vivo
+document.getElementById("nombre").addEventListener("input", function() {
+  if (this.value.trim().length < 3) {
+    marcarError(this, "El nombre debe tener al menos 3 letras.");
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Localidad en vivo
+document.getElementById("localidad").addEventListener("input", function() {
+  if (this.value.trim() === "") {
+    marcarError(this, "Debes ingresar la localidad.");
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar DNI en vivo
+document.getElementById("dni").addEventListener("input", function() {
+  if (isNaN(this.value.trim()) || this.value.trim().length < 7) {
+    marcarError(this, "El DNI debe tener entre 7 y 9 dígitos.");
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Teléfono en vivo
+document.getElementById("telefono").addEventListener("input", function() {
+  if (isNaN(this.value.trim()) || this.value.trim().length < 10) {
+    marcarError(this, "El teléfono debe tener al menos 10 dígitos.");
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Fecha Ingreso en vivo
+document.getElementById("fechaIngreso").addEventListener("change", function() {
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+  const fechaIngreso = new Date(this.value + "T00:00:00");
+
+  if (fechaIngreso < hoy) {
+    marcarError(this, "La fecha de ingreso debe ser hoy o posterior.");
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Fecha Egreso en vivo
+document.getElementById("fechaEgreso").addEventListener("change", function() {
+  const fechaIngreso = new Date(document.getElementById("fechaIngreso").value + "T00:00:00");
+  const fechaEgreso = new Date(this.value + "T00:00:00");
+
+  if (fechaEgreso <= fechaIngreso) {
+    marcarError(this, "La fecha de egreso debe ser posterior a la fecha de ingreso.");
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Personas según Unidad en vivo
+document.getElementById("personas").addEventListener("input", function() {
+  const unidad = document.getElementById("unidad").value;
+  const valorPersonas = parseInt(this.value.trim());
+
+  const limites = {
+    "Loft 2 personas": [1, 2],
+    "Loft 3 y 4 personas": [2, 4],
+    "Cabaña 2 y 3 personas": [1, 3],
+    "Departamento 4 y 5 personas": [2, 5],
+    "Cabaña hasta 8 personas": [5, 8],
+    "Habitación Sorelle": [1, 3]
+  };
+
+  const [min, max] = limites[unidad] || [1, 8];
+
+  if (isNaN(valorPersonas) || valorPersonas < min || valorPersonas > max) {
+    marcarError(this, `La unidad ${unidad} admite entre ${min} y ${max} personas.`);
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Unidad seleccionada cambia cantidad personas y opciones extra automáticamente
+document.getElementById("unidad").addEventListener("change", function() {
+  actualizarCantidadPersonas(); 
+  actualizarOpcionesExtra(this.value, document.getElementById("extra")); // 👈 Aca le agregamos la lógica
+});
+
+// =============================
+// VALIDACIONES EN VIVO: CLIENTE EXISTENTE
+// =============================
+
+// Validar Fecha Ingreso en vivo
+document.getElementById("fechaIngresoExistente").addEventListener("change", function() {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const fechaIngreso = new Date(this.value + "T00:00:00");
+
+  if (fechaIngreso < hoy) {
+    marcarError(this, "La fecha de ingreso debe ser hoy o posterior.");
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Fecha Egreso en vivo
+document.getElementById("fechaEgresoExistente").addEventListener("change", function() {
+  const fechaIngreso = new Date(document.getElementById("fechaIngresoExistente").value + "T00:00:00");
+  const fechaEgreso = new Date(this.value + "T00:00:00");
+
+  if (fechaEgreso <= fechaIngreso) {
+    marcarError(this, "La fecha de egreso debe ser posterior a la de ingreso.");
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Personas según Unidad en vivo (cliente existente)
+document.getElementById("personasExistente").addEventListener("input", function() {
+  const unidad = document.getElementById("unidadExistente").value;
+  const valorPersonas = parseInt(this.value.trim());
+
+  const limites = {
+    "Loft 2 personas": [1, 2],
+    "Loft 3 y 4 personas": [2, 4],
+    "Cabaña 2 y 3 personas": [1, 3],
+    "Departamento 4 y 5 personas": [2, 5],
+    "Cabaña hasta 8 personas": [5, 8],
+    "Habitación Sorelle": [1, 3]
+  };
+
+  const [min, max] = limites[unidad] || [1, 8];
+
+  if (isNaN(valorPersonas) || valorPersonas < min || valorPersonas > max) {
+    marcarError(this, `La unidad ${unidad} admite entre ${min} y ${max} personas.`);
+  } else {
+    marcarCorrecto(this);
+  }
+});
+
+// Validar Unidad seleccionada cambia cantidad personas y opciones extra automáticamente
+document.getElementById("unidadExistente").addEventListener("change", function() {
+  actualizarOpcionesExtra(this.value, document.getElementById("extraExistente"));
+});
+
+// =============================
+// VALIDACIONES GENERALES DEL FORMULARIO
+// =============================
+
+function validarFormulario(tipo) {
+  let unidad, personas, fechaIngreso, fechaEgreso, retiro, extra;
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  if (tipo === "nuevo") {
+    const nombre = document.getElementById("nombre");
+    const localidad = document.getElementById("localidad");
+    const dni = document.getElementById("dni");
+    const telefono = document.getElementById("telefono");
+
+    if (!nombre.value.trim() || nombre.value.trim().length < 3) {
+      marcarError(nombre, "El nombre debe tener al menos 3 letras.");
+      return false;
+    } else {
+      marcarCorrecto(nombre);
+    }
+
+    if (!localidad.value.trim()) {
+      marcarError(localidad, "Debes ingresar la localidad.");
+      return false;
+    } else {
+      marcarCorrecto(localidad);
+    }
+
+    if (isNaN(dni.value.trim()) || dni.value.trim().length < 7) {
+      marcarError(dni, "El DNI debe tener entre 7 y 9 dígitos.");
+      return false;
+    } else {
+      marcarCorrecto(dni);
+    }
+
+    if (isNaN(telefono.value.trim()) || telefono.value.trim().length < 10) {
+      marcarError(telefono, "El teléfono debe tener al menos 10 dígitos.");
+      return false;
+    } else {
+      marcarCorrecto(telefono);
+    }
+
+    unidad = document.getElementById("unidad").value.trim();
+    personas = parseInt(document.getElementById("personas").value.trim());
+    fechaIngreso = new Date(document.getElementById("fechaIngreso").value + "T00:00:00");
+    fechaEgreso = new Date(document.getElementById("fechaEgreso").value + "T00:00:00");
+    retiro = document.getElementById("retiro").value.trim();
+    extra = document.getElementById("extra").value.trim();
+  }
+
+  if (tipo === "existente") {
+    unidad = document.getElementById("unidadExistente").value.trim();
+    personas = parseInt(document.getElementById("personasExistente").value.trim());
+    fechaIngreso = new Date(document.getElementById("fechaIngresoExistente").value + "T00:00:00");
+    fechaEgreso = new Date(document.getElementById("fechaEgresoExistente").value + "T00:00:00");
+    retiro = document.getElementById("retiroExistente").value.trim();
+    extra = document.getElementById("extraExistente").value.trim();
+  }
+
+  if (!unidad) {
+    alert("❌ Debes seleccionar una unidad.");
+    return false;
+  }
+
+  const limites = {
+    "Loft 2 personas": [1, 2],
+    "Loft 3 y 4 personas": [2, 4],
+    "Cabaña 2 y 3 personas": [1, 3],
+    "Departamento 4 y 5 personas": [2, 5],
+    "Cabaña hasta 8 personas": [5, 8],
+    "Habitación Sorelle": [1, 3]
+  };
+
+  const [minPersonas, maxPersonas] = limites[unidad] || [1, 8];
+
+  if (isNaN(personas) || personas < minPersonas || personas > maxPersonas) {
+    alert(`❌ La unidad ${unidad} admite entre ${minPersonas} y ${maxPersonas} personas.`);
+    return false;
+  }
+
+  if (isNaN(fechaIngreso) || fechaIngreso < hoy) {
+    alert("❌ La fecha de ingreso debe ser hoy o una fecha futura.");
+    return false;
+  }
+
+  if (isNaN(fechaEgreso) || fechaEgreso <= fechaIngreso) {
+    alert("❌ La fecha de egreso debe ser posterior a la de ingreso.");
+    return false;
+  }
+
+  if (!retiro) {
+    alert("❌ Debes seleccionar un horario de salida.");
+    return false;
+  }
+
+  if (!extra) {
+    alert("❌ Debes seleccionar una opción en '¿Algo que debamos saber?'.");
+    return false;
   }
 
   const unidadesConCamasSeparadas = [
@@ -276,77 +468,88 @@ function actualizarOpcionesExtra() {
     "Departamento 4 y 5 personas"
   ];
 
-  if (!unidadesConCamasSeparadas.includes(unidadSeleccionada)) {
-    for (let i = 0; i < selectExtra.options.length; i++) {
-      if (selectExtra.options[i].value === "Camas separadas") {
-        selectExtra.options[i].style.display = "none";
-      }
-    }
-    if (selectExtra.value === "Camas separadas") {
-      selectExtra.value = "";
-    }
-  }
-}
-
-// =============================
-//   VALIDAR TODO AL ENVIAR
-// =============================
-
-function validarFormulario() {
-  const nombre = document.getElementById("nombre").value.trim();
-  const pais = document.getElementById("pais").value.trim();
-  const localidad = document.getElementById("localidad").value.trim();
-  const dni = document.getElementById("dni").value.trim();
-  const telefono = document.getElementById("telefono").value.trim();
-  const unidad = document.getElementById("unidad").value.trim();
-  const personas = parseInt(document.getElementById("personas").value.trim());
-  const fechaIngreso = new Date(document.getElementById("fechaIngreso").value + "T00:00:00");
-  const fechaEgreso = new Date(document.getElementById("fechaEgreso").value + "T00:00:00");
-  const retiro = document.getElementById("retiro").value.trim();
-  const extra = document.getElementById("extra").value.trim();
-  const hoy = new Date();
-  hoy.setHours(0,0,0,0);
-
-  if (!nombre || nombre.length < 3) {
-    alert("❌ Nombre inválido.");
-    return false;
-  }
-  if (!localidad) {
-    alert("❌ Localidad inválida.");
-    return false;
-  }
-  if (isNaN(dni) || dni.length < 7) {
-    alert("❌ DNI inválido.");
-    return false;
-  }
-  if (isNaN(telefono) || telefono.length < 10) {
-    alert("❌ Teléfono inválido.");
-    return false;
-  }
-  if (!unidad) {
-    alert("❌ Debes seleccionar una unidad.");
-    return false;
-  }
-  if (isNaN(personas) || personas <= 0) {
-    alert("❌ Cantidad de personas inválida.");
-    return false;
-  }
-  if (isNaN(fechaIngreso) || fechaIngreso < hoy) {
-    alert("❌ La fecha de ingreso debe ser hoy o una fecha futura.");
-    return false;
-  }
-  if (isNaN(fechaEgreso) || fechaEgreso <= fechaIngreso) {
-    alert("❌ La fecha de egreso debe ser posterior a la fecha de ingreso.");
-    return false;
-  }
-  if (!retiro) {
-    alert("❌ Debes seleccionar horario de salida.");
-    return false;
-  }
-  if (!extra) {
-    alert("❌ Debes seleccionar 'algo que debamos saber'.");
+  if (extra === "Camas separadas" && !unidadesConCamasSeparadas.includes(unidad)) {
+    alert(`❌ La unidad ${unidad} no permite la opción 'Camas separadas'.`);
     return false;
   }
 
   return true;
 }
+
+// =============================
+//         MODALES
+// =============================
+
+function mostrarModalConfirmacion() {
+  document.getElementById("modalConfirmacion").style.display = "flex";
+}
+
+function mostrarModalNoEncontrado() {
+  document.getElementById("modalNoEncontrado").style.display = "flex";
+}
+
+document.getElementById("btnCerrarModal").addEventListener("click", () => {
+  document.getElementById("modalConfirmacion").style.display = "none";
+  reiniciarVista();
+});
+
+document.getElementById("btnAceptarNoEncontrado").addEventListener("click", () => {
+  document.getElementById("modalNoEncontrado").style.display = "none";
+  reiniciarVista();
+});
+
+
+// =============================
+// FUNCIONES AUXILIARES
+// =============================
+
+function reiniciarVista() {
+  document.getElementById("formNuevo").style.display = "none";
+  document.getElementById("formExistente").style.display = "none";
+  document.getElementById("formReservaExistente").style.display = "none";
+  document.getElementById("saludoCliente").innerText = "";
+  document.getElementById("dniExistente").value = "";
+}
+
+function marcarError(input, mensaje) {
+  input.style.border = "2px solid red";
+  const errorField = document.getElementById("error_" + input.id) || crearCampoError(input, "error_" + input.id);
+  errorField.innerText = mensaje;
+}
+
+function marcarCorrecto(input) {
+  input.style.border = "2px solid green";
+  const errorField = document.getElementById("error_" + input.id);
+  if (errorField) {
+    errorField.innerText = "";
+  }
+}
+
+function crearCampoError(inputElement, id) {
+  const error = document.createElement("small");
+  error.style.color = "red";
+  error.id = id;
+  error.style.display = "block";
+  inputElement.parentNode.insertBefore(error, inputElement.nextSibling);
+  return error;
+}
+
+function actualizarCantidadPersonas() {
+  const unidad = document.getElementById("unidad").value;
+  const inputPersonas = document.getElementById("personas");
+
+  const limites = {
+    "Loft 2 personas": [1, 2],
+    "Loft 3 y 4 personas": [2, 4],
+    "Cabaña 2 y 3 personas": [1, 3],
+    "Departamento 4 y 5 personas": [2, 5],
+    "Cabaña hasta 8 personas": [5, 8],
+    "Habitación Sorelle": [1, 3]
+  };
+
+  const [min, max] = limites[unidad] || [1, 8];
+  inputPersonas.min = min;
+  inputPersonas.max = max;
+}
+
+
