@@ -77,6 +77,11 @@ document.getElementById("formularioReservaExistente").addEventListener("submit",
 // =============================
 
 function enviarDatosFormulario(datos) {
+
+  datos.fechaIngreso = convertirFechaA_ddmmaaaa(datos.fechaIngreso);
+  datos.fechaEgreso = convertirFechaA_ddmmaaaa(datos.fechaEgreso);
+  
+
   fetch('https://script.google.com/macros/s/AKfycbwwBQ6QrMJ_eaemOcy8JGWbxmzK5bHPmR5bTPUQ8XdCtsVQtzM9LvRH_7X3__SybmKyYQ/exec', {
     method: 'POST',
     contentType: 'application/json',
@@ -96,6 +101,15 @@ function enviarDatosFormulario(datos) {
     });
 }
 
+// =============================
+// formatear fecha
+// =============================
+
+function convertirFechaA_ddmmaaaa(fechaIso) {
+  if (!fechaIso || !fechaIso.includes("-")) return fechaIso;
+  const [yyyy, mm, dd] = fechaIso.split("-");
+  return `${dd}/${mm}/${yyyy}`;
+}
 
 // =============================
 //     FORMULARIO CLIENTES
@@ -145,6 +159,9 @@ function enviarDatosReservaExistente(datosReserva) {
     return;
   }
 
+  datos.fechaIngreso = convertirFechaA_ddmmaaaa(datos.fechaIngreso);
+  datos.fechaEgreso = convertirFechaA_ddmmaaaa(datos.fechaEgreso);
+  
   const datosCompletos = {
     nombre: clienteEncontrado.nombre,
     localidad: clienteEncontrado.localidad,
@@ -157,6 +174,7 @@ function enviarDatosReservaExistente(datosReserva) {
     retiro: datosReserva.retiro,
     extra: datosReserva.extra
   };
+
 
   fetch('https://script.google.com/macros/s/AKfycbwwBQ6QrMJ_eaemOcy8JGWbxmzK5bHPmR5bTPUQ8XdCtsVQtzM9LvRH_7X3__SybmKyYQ/exec', {
     method: 'POST',
