@@ -1,153 +1,176 @@
 body {
-    background-color: #f9f9f9;
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-  }
-  
-  h1 {
-    color: #333;
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-  
-  p {
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 20px;
-  }
-  
-  button {
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    margin: 10px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Form styles */
+  background-color: #e2d3be;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 20px;
+}
 
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    padding: 20px;
-  }
-  
-  h1 {
-    text-align: center;
-    color: #333;
-  }
-  
-  #opciones {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
-  #opciones button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    margin: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  #opciones button:hover {
-    background-color: #0056b3;
-  }
-  
-  #formNuevo, #formExistente {
-    max-width: 600px;
-    margin: 0 auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-  }
-  
-  form label {
-    display: block;
-    margin-top: 15px;
-    font-weight: bold;
-  }
-  
-  form input, form select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  form button[type="submit"] {
-    margin-top: 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  form button[type="submit"]:hover {
-    background-color: #218838;
-  }
-  
-  /* =====================
+h1 {
+  color: #5e4008;
+  font-size: 2rem;
+  text-align: center;
+  margin: 20px 0;
+}
+
+p {
+  font-size: 1rem;
+  color: #5e4008;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #724615;
+  color: rgb(218, 215, 202);
+  border: none;
+  padding: 12px 20px;
+  margin: 10px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #000000;
+}
+
+#opciones {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#opciones button {
+  background-color: #724615;
+  color: rgb(218, 215, 202);
+  padding: 10px 15px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#opciones button:hover {
+  background-color: #724615;
+}
+
+#formNuevo,
+#formExistente {
+  width: 100%;
+  max-width: 600px;
+  background: rgb(218, 215, 202);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+}
+
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+form button[type="submit"] {
+  margin-top: 20px;
+  background-color: #724615;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+form button[type="submit"]:hover {
+  background-color: #724615;
+}
+
+/* =====================
    ESTILOS PARA MODALES
    ===================== */
-/* Estilo general del fondo del modal */
+
 .modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 95%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  padding: 10px;
 }
 
-/* Contenedor interno del mensaje */
 .modal-content {
-  background-color: #fff;
-  padding: 30px;
+  background-color: #ffffff;
+  padding: 30px 20px;
   border-radius: 12px;
   text-align: center;
   max-width: 400px;
-  width: 90%;
+  width: 100%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
   font-size: 1.1rem;
+  box-sizing: border-box;
 }
 
-/* Botón dentro del modal */
 .modal-content button {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #724615;
   border: none;
   border-radius: 6px;
-  color: white;
+  color: rgb(218, 215, 202);
   font-size: 1rem;
   cursor: pointer;
+  width: 100%;
 }
 
 .modal-content button:hover {
-  background-color: #0056b3;
+  background-color: #724615;
 }
+
+/* ======================
+   MEDIA QUERIES MÓVILES
+   ====================== */
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  button, 
+  #opciones button,
+  .modal-content button {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+
+  form input,
+  form select {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+
+  .modal-content {
+    font-size: 1rem;
+  }
+}
+
 

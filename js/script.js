@@ -159,9 +159,9 @@ function enviarDatosReservaExistente(datosReserva) {
     return;
   }
 
-  datos.fechaIngreso = convertirFechaA_ddmmaaaa(datos.fechaIngreso);
-  datos.fechaEgreso = convertirFechaA_ddmmaaaa(datos.fechaEgreso);
-  
+  datosReserva.fechaIngreso = convertirFechaA_ddmmaaaa(datosReserva.fechaIngreso);
+datosReserva.fechaEgreso = convertirFechaA_ddmmaaaa(datosReserva.fechaEgreso);
+
   const datosCompletos = {
     nombre: clienteEncontrado.nombre,
     localidad: clienteEncontrado.localidad,
@@ -175,8 +175,7 @@ function enviarDatosReservaExistente(datosReserva) {
     extra: datosReserva.extra
   };
 
-
-  fetch('https://script.google.com/macros/s/AKfycbwwBQ6QrMJ_eaemOcy8JGWbxmzK5bHPmR5bTPUQ8XdCtsVQtzM9LvRH_7X3__SybmKyYQ/exec', {
+  fetch('https://script.google.com/macros/s/...', {
     method: 'POST',
     contentType: 'application/json',
     body: JSON.stringify(datosCompletos)
