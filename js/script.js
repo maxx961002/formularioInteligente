@@ -55,7 +55,7 @@ document.getElementById("formularioNuevoCliente").addEventListener("submit", fun
   }
 });
 
-document.getElementById("formularioReservaExistente").addEventListener("submit", function(e) {
+document.getElementById("formularioReservaExistente").addEventListener("submit", function (e) {
   e.preventDefault();
 
   if (validarFormulario("existente")) {
@@ -80,7 +80,7 @@ function enviarDatosFormulario(datos) {
 
   datos.fechaIngreso = convertirFechaA_ddmmaaaa(datos.fechaIngreso);
   datos.fechaEgreso = convertirFechaA_ddmmaaaa(datos.fechaEgreso);
-  
+
 
   fetch('https://script.google.com/macros/s/AKfycbwwBQ6QrMJ_eaemOcy8JGWbxmzK5bHPmR5bTPUQ8XdCtsVQtzM9LvRH_7X3__SybmKyYQ/exec', {
     method: 'POST',
@@ -92,7 +92,7 @@ function enviarDatosFormulario(datos) {
       if (data.status === "ok") {
         mostrarModalConfirmacion();
       }
-       else {
+      else {
         alert("❌ Error al enviar datos: " + data.mensaje);
       }
     })
@@ -123,7 +123,7 @@ document.getElementById("btnBuscar").addEventListener("click", function () {
     return;
   }
 
-  fetch('https://script.google.com/macros/s/AKfycbzJ4PEEjOUeFYr4KQTO2kK5v6eDyy-ovC7loXcUMnbWeXPZVQLYg1Fv_T97LnNdO8MUxg/exec')  
+  fetch('https://script.google.com/macros/s/AKfycbzJ4PEEjOUeFYr4KQTO2kK5v6eDyy-ovC7loXcUMnbWeXPZVQLYg1Fv_T97LnNdO8MUxg/exec')
     .then(response => response.json())
     .then(clientes => {
       clienteEncontrado = clientes.find(cliente => cliente.dni === dniIngresado);
@@ -140,7 +140,7 @@ document.getElementById("btnBuscar").addEventListener("click", function () {
         mostrarModalNoEncontrado();
         reiniciarVista
       }
-      
+
     })
     .catch(error => {
       console.error("Error al buscar el cliente:", error);
@@ -160,7 +160,7 @@ function enviarDatosReservaExistente(datosReserva) {
   }
 
   datosReserva.fechaIngreso = convertirFechaA_ddmmaaaa(datosReserva.fechaIngreso);
-datosReserva.fechaEgreso = convertirFechaA_ddmmaaaa(datosReserva.fechaEgreso);
+  datosReserva.fechaEgreso = convertirFechaA_ddmmaaaa(datosReserva.fechaEgreso);
 
   const datosCompletos = {
     nombre: clienteEncontrado.nombre,
@@ -175,23 +175,23 @@ datosReserva.fechaEgreso = convertirFechaA_ddmmaaaa(datosReserva.fechaEgreso);
     extra: datosReserva.extra
   };
 
-  fetch('https://script.google.com/macros/s/AKfycbzJ4PEEjOUeFYr4KQTO2kK5v6eDyy-ovC7loXcUMnbWeXPZVQLYg1Fv_T97LnNdO8MUxg/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbwwBQ6QrMJ_eaemOcy8JGWbxmzK5bHPmR5bTPUQ8XdCtsVQtzM9LvRH_7X3__SybmKyYQ/exec', {
     method: 'POST',
     contentType: 'application/json',
     body: JSON.stringify(datosCompletos)
   })
-  .then(response => response.json())
-  .then(data => {
-    if (data.status === "ok") {
-      mostrarModalConfirmacion();
-    }    
-     else {
-      alert("❌ Error al enviar la reserva: " + data.mensaje);
-    }
-  })
-  .catch(error => {
-    alert("❌ Error de red al enviar reserva: " + error);
-  });
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "ok") {
+        mostrarModalConfirmacion();
+      }
+      else {
+        alert("❌ Error al enviar la reserva: " + data.mensaje);
+      }
+    })
+    .catch(error => {
+      alert("❌ Error de red al enviar reserva: " + error);
+    });
 }
 
 // =============================
@@ -232,7 +232,7 @@ function actualizarOpcionesExtra(unidadSeleccionada, selectExtra) {
 // =============================
 
 // Validar Nombre en vivo
-document.getElementById("nombre").addEventListener("input", function() {
+document.getElementById("nombre").addEventListener("input", function () {
   if (this.value.trim().length < 3) {
     marcarError(this, "El nombre debe tener al menos 3 letras.");
   } else {
@@ -241,7 +241,7 @@ document.getElementById("nombre").addEventListener("input", function() {
 });
 
 // Validar Localidad en vivo
-document.getElementById("localidad").addEventListener("input", function() {
+document.getElementById("localidad").addEventListener("input", function () {
   if (this.value.trim() === "") {
     marcarError(this, "Debes ingresar la localidad.");
   } else {
@@ -250,7 +250,7 @@ document.getElementById("localidad").addEventListener("input", function() {
 });
 
 // Validar DNI en vivo
-document.getElementById("dni").addEventListener("input", function() {
+document.getElementById("dni").addEventListener("input", function () {
   if (isNaN(this.value.trim()) || this.value.trim().length < 7) {
     marcarError(this, "El DNI debe tener entre 7 y 9 dígitos.");
   } else {
@@ -259,7 +259,7 @@ document.getElementById("dni").addEventListener("input", function() {
 });
 
 // Validar Teléfono en vivo
-document.getElementById("telefono").addEventListener("input", function() {
+document.getElementById("telefono").addEventListener("input", function () {
   if (isNaN(this.value.trim()) || this.value.trim().length < 10) {
     marcarError(this, "El teléfono debe tener al menos 10 dígitos.");
   } else {
@@ -268,9 +268,9 @@ document.getElementById("telefono").addEventListener("input", function() {
 });
 
 // Validar Fecha Ingreso en vivo
-document.getElementById("fechaIngreso").addEventListener("change", function() {
+document.getElementById("fechaIngreso").addEventListener("change", function () {
   const hoy = new Date();
-  hoy.setHours(0,0,0,0);
+  hoy.setHours(0, 0, 0, 0);
   const fechaIngreso = new Date(this.value + "T00:00:00");
 
   if (fechaIngreso < hoy) {
@@ -281,7 +281,7 @@ document.getElementById("fechaIngreso").addEventListener("change", function() {
 });
 
 // Validar Fecha Egreso en vivo
-document.getElementById("fechaEgreso").addEventListener("change", function() {
+document.getElementById("fechaEgreso").addEventListener("change", function () {
   const fechaIngreso = new Date(document.getElementById("fechaIngreso").value + "T00:00:00");
   const fechaEgreso = new Date(this.value + "T00:00:00");
 
@@ -293,7 +293,7 @@ document.getElementById("fechaEgreso").addEventListener("change", function() {
 });
 
 // Validar Personas según Unidad en vivo
-document.getElementById("personas").addEventListener("input", function() {
+document.getElementById("personas").addEventListener("input", function () {
   const unidad = document.getElementById("unidad").value;
   const valorPersonas = parseInt(this.value.trim());
 
@@ -316,8 +316,8 @@ document.getElementById("personas").addEventListener("input", function() {
 });
 
 // Validar Unidad seleccionada cambia cantidad personas y opciones extra automáticamente
-document.getElementById("unidad").addEventListener("change", function() {
-  actualizarCantidadPersonas(); 
+document.getElementById("unidad").addEventListener("change", function () {
+  actualizarCantidadPersonas();
   actualizarOpcionesExtra(this.value, document.getElementById("extra")); // 👈 Aca le agregamos la lógica
 });
 
@@ -326,7 +326,7 @@ document.getElementById("unidad").addEventListener("change", function() {
 // =============================
 
 // Validar Fecha Ingreso en vivo
-document.getElementById("fechaIngresoExistente").addEventListener("change", function() {
+document.getElementById("fechaIngresoExistente").addEventListener("change", function () {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
   const fechaIngreso = new Date(this.value + "T00:00:00");
@@ -339,7 +339,7 @@ document.getElementById("fechaIngresoExistente").addEventListener("change", func
 });
 
 // Validar Fecha Egreso en vivo
-document.getElementById("fechaEgresoExistente").addEventListener("change", function() {
+document.getElementById("fechaEgresoExistente").addEventListener("change", function () {
   const fechaIngreso = new Date(document.getElementById("fechaIngresoExistente").value + "T00:00:00");
   const fechaEgreso = new Date(this.value + "T00:00:00");
 
@@ -351,7 +351,7 @@ document.getElementById("fechaEgresoExistente").addEventListener("change", funct
 });
 
 // Validar Personas según Unidad en vivo (cliente existente)
-document.getElementById("personasExistente").addEventListener("input", function() {
+document.getElementById("personasExistente").addEventListener("input", function () {
   const unidad = document.getElementById("unidadExistente").value;
   const valorPersonas = parseInt(this.value.trim());
 
@@ -374,7 +374,7 @@ document.getElementById("personasExistente").addEventListener("input", function(
 });
 
 // Validar Unidad seleccionada cambia cantidad personas y opciones extra automáticamente
-document.getElementById("unidadExistente").addEventListener("change", function() {
+document.getElementById("unidadExistente").addEventListener("change", function () {
   actualizarOpcionesExtra(this.value, document.getElementById("extraExistente"));
 });
 
@@ -514,6 +514,27 @@ document.getElementById("btnAceptarNoEncontrado").addEventListener("click", () =
   document.getElementById("modalNoEncontrado").style.display = "none";
   reiniciarVista();
 });
+
+// BASES Y CONDICIONES
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnAbrir = document.getElementById("abrirModalBases");
+  const btnCerrar = document.getElementById("cerrarModalBases");
+  const modal = document.getElementById("modalBases");
+
+  if (btnAbrir && btnCerrar && modal) {
+    btnAbrir.addEventListener("click", function (e) {
+      e.preventDefault();
+      modal.style.display = "flex";
+    });
+
+    btnCerrar.addEventListener("click", function () {
+      modal.style.display = "none";
+    });
+  }
+});
+
+
 
 
 // =============================

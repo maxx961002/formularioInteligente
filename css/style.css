@@ -1,11 +1,15 @@
+/* ======================
+   ESTILO GENERAL
+====================== */
 body {
-  background-color: #e2d3be;
+  background-color: #efe6db;
   font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0;
-  padding: 20px;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -22,7 +26,83 @@ p {
   margin-bottom: 20px;
 }
 
-button {
+img {
+  max-width: 90%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* =====================
+   MODAL BASES Y CONDICIONES
+   ===================== */
+
+/* Fondo oscuro del modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh; /* asegura altura total */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Caja del modal */
+.modal-content {
+  background-color: #f5f0e5;
+  color: #3d2b1f;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh; /* limita altura máxima visible */
+  overflow-y: auto;  /* activa scroll vertical */
+  padding: 25px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content .contenido-scroll {
+  overflow-y: auto;
+  max-height: 70vh;
+  padding-right: 5px;
+  margin-bottom: 20px;
+}
+
+
+
+#modalBasesCondiciones .modal-content h3 {
+  margin-top: 0;
+  font-size: 1.3rem;
+  color: #724615;
+}
+
+#btnCerrarCondiciones {
+  margin-top: 20px;
+  background-color: #724615;
+  color: #f5f0e5;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+#btnCerrarCondiciones:hover {
+  background-color: #5a3612;
+}
+
+/* ======================
+   BOTONES
+====================== */
+button,
+#opciones button {
   background-color: #724615;
   color: rgb(218, 215, 202);
   border: none;
@@ -34,29 +114,22 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+button:hover,
+#opciones button:hover {
   background-color: #000000;
 }
 
+/* ======================
+   CONTENEDOR DE BOTONES
+====================== */
 #opciones {
   text-align: center;
   margin-bottom: 30px;
 }
 
-#opciones button {
-  background-color: #724615;
-  color: rgb(218, 215, 202);
-  padding: 10px 15px;
-  margin: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#opciones button:hover {
-  background-color: #724615;
-}
-
+/* ======================
+   FORMULARIOS
+====================== */
 #formNuevo,
 #formExistente {
   width: 100%;
@@ -97,13 +170,12 @@ form button[type="submit"] {
 }
 
 form button[type="submit"]:hover {
-  background-color: #724615;
+  background-color: #000000;
 }
 
-/* =====================
-   ESTILOS PARA MODALES
-   ===================== */
-
+/* ======================
+   MODALES
+====================== */
 .modal {
   position: fixed;
   top: 0;
@@ -143,13 +215,43 @@ form button[type="submit"]:hover {
 }
 
 .modal-content button:hover {
-  background-color: #724615;
+  background-color: #000000;
 }
 
 /* ======================
-   MEDIA QUERIES MÓVILES
-   ====================== */
+   FOOTER
+====================== */
+.footer {
+  background-color: #724615;
+  color: rgb(218, 215, 202);
+  padding: 20px 10px;
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.9rem;
+  width: 100%;
+}
 
+.footer a {
+  color: #e4d5c4;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer .redes {
+  margin-top: 10px;
+}
+
+.footer p {
+  margin: 5px 0;
+  color: #000000;
+}
+
+/* ======================
+   RESPONSIVE MOBILE
+====================== */
 @media (max-width: 480px) {
   h1 {
     font-size: 1.5rem;
@@ -174,3 +276,12 @@ form button[type="submit"]:hover {
 }
 
 
+/* Evita scroll horizontal global */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Asegura que todos calculen bien padding/borde */
+* {
+  box-sizing: border-box;
+}
