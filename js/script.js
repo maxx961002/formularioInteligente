@@ -124,30 +124,32 @@ document.getElementById("btnBuscar").addEventListener("click", function () {
   }
 
   fetch('https://script.google.com/macros/s/AKfycbzJ4PEEjOUeFYr4KQTO2kK5v6eDyy-ovC7loXcUMnbWeXPZVQLYg1Fv_T97LnNdO8MUxg/exec')
-    .then(response => response.json())
-    .then(clientes => {
-      clienteEncontrado = clientes.find(cliente => cliente.dni === dniIngresado);
+  .then(response => response.json())
+  .then(clientes => {
+    console.log("🧪 Clientes recibidos:", clientes);
+    clientes.forEach(c => console.log("🔍 DNI:", c.dni, " | Tel:", c.telefono));
 
-      if (clienteEncontrado) {
-        // ✅ Si el cliente EXISTE
-        document.getElementById("saludoCliente").innerText =
-          `Hola ${clienteEncontrado.nombre}, nos alegra hospedarte nuevamente.`;
-
-        document.getElementById("formReservaExistente").style.display = "block";
-
-        // Acá después vamos a armar los campos para reservar directamente
-      } else {
-        mostrarModalNoEncontrado();
-        reiniciarVista
-      }
-
-    })
-    .catch(error => {
-      console.error("Error al buscar el cliente:", error);
-      alert("Hubo un problema buscando el cliente. Intenta nuevamente.");
+    const coincidencia = clientes.find(d => {
+      console.log(`🔍 Comparando ${d.dni} con ${dniIngresado}`);
+      return d.dni === dniIngresado;
     });
-});
 
+    clienteEncontrado = coincidencia;
+
+    if (clienteEncontrado) {
+      document.getElementById("saludoCliente").innerText =
+        `Hola ${clienteEncontrado.nombre}, nos alegra hospedarte nuevamente.`;
+      document.getElementById("formReservaExistente").style.display = "block";
+    } else {
+      mostrarModalNoEncontrado();
+      reiniciarVista();
+    }
+  })
+  .catch(error => {
+    console.error("Error al buscar el cliente:", error);
+    alert("Hubo un problema buscando el cliente. Intenta nuevamente.");
+  });
+});
 // =============================
 //     ENVIAR RESERVA CLIENTE EXISTENTE
 // =============================
@@ -165,8 +167,8 @@ function enviarDatosReservaExistente(datosReserva) {
   const datosCompletos = {
     nombre: clienteEncontrado.nombre,
     localidad: clienteEncontrado.localidad,
-    dni: clienteEncontrado.dni,
     telefono: clienteEncontrado.telefono,
+    dni: clienteEncontrado.dni,
     unidad: datosReserva.unidad,
     personas: datosReserva.personas,
     fechaIngreso: datosReserva.fechaIngreso,
