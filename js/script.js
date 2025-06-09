@@ -93,17 +93,26 @@ function enviarDatosFormulario(datos) {
         mostrarModalConfirmacion();
       }
       else {
-        alert("❌ Error al enviar datos: " + data.mensaje);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al enviar datos.'
+        });
+
       }
     })
     .catch(error => {
-      alert("❌ Error de red al enviar datos: " + error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error de red al enviar datos.'
+      });
     });
 }
 
-// =============================
-// formatear fecha
-// =============================
+// ======================
+//    FORMATEAR FECHA
+// ======================
 
 function convertirFechaA_ddmmaaaa(fechaIso) {
   if (!fechaIso || !fechaIso.includes("-")) return fechaIso;
@@ -119,45 +128,55 @@ document.getElementById("btnBuscar").addEventListener("click", function () {
   const dniIngresado = document.getElementById("dniExistente").value.trim();
 
   if (!dniIngresado) {
-    alert("❌ Debes ingresar un DNI para buscar.");
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Debes ingresar un DNI para buscar.'
+    });
     return;
   }
 
   fetch('https://script.google.com/macros/s/AKfycbzJ4PEEjOUeFYr4KQTO2kK5v6eDyy-ovC7loXcUMnbWeXPZVQLYg1Fv_T97LnNdO8MUxg/exec')
-  .then(response => response.json())
-  .then(clientes => {
-    console.log("🧪 Clientes recibidos:", clientes);
-    clientes.forEach(c => console.log("🔍 DNI:", c.dni, " | Tel:", c.telefono));
+    .then(response => response.json())
+    .then(clientes => {
+      clientes.forEach(c => console.log("🔍 DNI:", c.dni, " | Tel:", c.telefono));
 
-    const coincidencia = clientes.find(d => {
-      console.log(`🔍 Comparando ${d.dni} con ${dniIngresado}`);
-      return d.dni === dniIngresado;
+      const coincidencia = clientes.find(d => {
+        return d.dni === dniIngresado;
+      });
+
+      clienteEncontrado = coincidencia;
+
+      if (clienteEncontrado) {
+        document.getElementById("saludoCliente").innerText =
+          `Hola ${clienteEncontrado.nombre}, nos alegra hospedarte nuevamente.`;
+        document.getElementById("formReservaExistente").style.display = "block";
+      } else {
+        mostrarModalNoEncontrado();
+        reiniciarVista();
+      }
+    })
+    .catch(error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo problemas para buscar el cliente, intenta nuevamente.'
+      });
     });
-
-    clienteEncontrado = coincidencia;
-
-    if (clienteEncontrado) {
-      document.getElementById("saludoCliente").innerText =
-        `Hola ${clienteEncontrado.nombre}, nos alegra hospedarte nuevamente.`;
-      document.getElementById("formReservaExistente").style.display = "block";
-    } else {
-      mostrarModalNoEncontrado();
-      reiniciarVista();
-    }
-  })
-  .catch(error => {
-    console.error("Error al buscar el cliente:", error);
-    alert("Hubo un problema buscando el cliente. Intenta nuevamente.");
-  });
 });
-// =============================
-//     ENVIAR RESERVA CLIENTE EXISTENTE
-// =============================
 
-// Enviar datos a la hoja de respuestas
+// ======================================
+//     ENVIAR RESERVA CLIENTE EXISTENTE
+// ======================================
+
+
 function enviarDatosReservaExistente(datosReserva) {
   if (!clienteEncontrado) {
-    alert("Error: No hay cliente cargado.");
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No tenemos ningun cliente cargado.'
+    });
     return;
   }
 
@@ -188,17 +207,25 @@ function enviarDatosReservaExistente(datosReserva) {
         mostrarModalConfirmacion();
       }
       else {
-        alert("❌ Error al enviar la reserva: " + data.mensaje);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al enviar la reserva.'
+        });
       }
     })
     .catch(error => {
-      alert("❌ Error de red al enviar reserva: " + error);
+      Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al enviar la reserva.'
+    });
     });
 }
 
-// =============================
+// =======================
 //     OPCIONES EXTRAS
-// =============================
+// =======================
 
 function actualizarOpcionesExtra(unidadSeleccionada, selectExtra) {
   // Mostrar todas las opciones primero
@@ -229,11 +256,12 @@ function actualizarOpcionesExtra(unidadSeleccionada, selectExtra) {
 }
 
 
-// =============================
+// ======================================
 //   VALIDACIONES EN VIVO: NUEVO CLIENTE
-// =============================
+// ======================================
 
 // Validar Nombre en vivo
+
 document.getElementById("nombre").addEventListener("input", function () {
   if (this.value.trim().length < 3) {
     marcarError(this, "El nombre debe tener al menos 3 letras.");
@@ -243,6 +271,7 @@ document.getElementById("nombre").addEventListener("input", function () {
 });
 
 // Validar Localidad en vivo
+
 document.getElementById("localidad").addEventListener("input", function () {
   if (this.value.trim() === "") {
     marcarError(this, "Debes ingresar la localidad.");
@@ -252,6 +281,7 @@ document.getElementById("localidad").addEventListener("input", function () {
 });
 
 // Validar DNI en vivo
+
 document.getElementById("dni").addEventListener("input", function () {
   if (isNaN(this.value.trim()) || this.value.trim().length < 7) {
     marcarError(this, "El DNI debe tener entre 7 y 9 dígitos.");
@@ -261,6 +291,7 @@ document.getElementById("dni").addEventListener("input", function () {
 });
 
 // Validar Teléfono en vivo
+
 document.getElementById("telefono").addEventListener("input", function () {
   if (isNaN(this.value.trim()) || this.value.trim().length < 10) {
     marcarError(this, "El teléfono debe tener al menos 10 dígitos.");
@@ -270,6 +301,7 @@ document.getElementById("telefono").addEventListener("input", function () {
 });
 
 // Validar Fecha Ingreso en vivo
+
 document.getElementById("fechaIngreso").addEventListener("change", function () {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
@@ -283,6 +315,7 @@ document.getElementById("fechaIngreso").addEventListener("change", function () {
 });
 
 // Validar Fecha Egreso en vivo
+
 document.getElementById("fechaEgreso").addEventListener("change", function () {
   const fechaIngreso = new Date(document.getElementById("fechaIngreso").value + "T00:00:00");
   const fechaEgreso = new Date(this.value + "T00:00:00");
@@ -295,6 +328,7 @@ document.getElementById("fechaEgreso").addEventListener("change", function () {
 });
 
 // Validar Personas según Unidad en vivo
+
 document.getElementById("personas").addEventListener("input", function () {
   const unidad = document.getElementById("unidad").value;
   const valorPersonas = parseInt(this.value.trim());
@@ -318,16 +352,18 @@ document.getElementById("personas").addEventListener("input", function () {
 });
 
 // Validar Unidad seleccionada cambia cantidad personas y opciones extra automáticamente
+
 document.getElementById("unidad").addEventListener("change", function () {
   actualizarCantidadPersonas();
-  actualizarOpcionesExtra(this.value, document.getElementById("extra")); // 👈 Aca le agregamos la lógica
+  actualizarOpcionesExtra(this.value, document.getElementById("extra"));
 });
 
-// =============================
+// ========================================
 // VALIDACIONES EN VIVO: CLIENTE EXISTENTE
-// =============================
+// ========================================
 
 // Validar Fecha Ingreso en vivo
+
 document.getElementById("fechaIngresoExistente").addEventListener("change", function () {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
@@ -341,6 +377,7 @@ document.getElementById("fechaIngresoExistente").addEventListener("change", func
 });
 
 // Validar Fecha Egreso en vivo
+
 document.getElementById("fechaEgresoExistente").addEventListener("change", function () {
   const fechaIngreso = new Date(document.getElementById("fechaIngresoExistente").value + "T00:00:00");
   const fechaEgreso = new Date(this.value + "T00:00:00");
@@ -353,6 +390,7 @@ document.getElementById("fechaEgresoExistente").addEventListener("change", funct
 });
 
 // Validar Personas según Unidad en vivo (cliente existente)
+
 document.getElementById("personasExistente").addEventListener("input", function () {
   const unidad = document.getElementById("unidadExistente").value;
   const valorPersonas = parseInt(this.value.trim());
@@ -376,13 +414,14 @@ document.getElementById("personasExistente").addEventListener("input", function 
 });
 
 // Validar Unidad seleccionada cambia cantidad personas y opciones extra automáticamente
+
 document.getElementById("unidadExistente").addEventListener("change", function () {
   actualizarOpcionesExtra(this.value, document.getElementById("extraExistente"));
 });
 
-// =============================
+// ======================================
 // VALIDACIONES GENERALES DEL FORMULARIO
-// =============================
+// ======================================
 
 function validarFormulario(tipo) {
   let unidad, personas, fechaIngreso, fechaEgreso, retiro, extra;
@@ -441,7 +480,11 @@ function validarFormulario(tipo) {
   }
 
   if (!unidad) {
-    alert("❌ Debes seleccionar una unidad.");
+    Swal.fire({
+      icon: 'warning',
+      title: 'Atención',
+      text: 'Debes seleccionar una unidad.'
+    });
     return false;
   }
 
@@ -457,27 +500,47 @@ function validarFormulario(tipo) {
   const [minPersonas, maxPersonas] = limites[unidad] || [1, 8];
 
   if (isNaN(personas) || personas < minPersonas || personas > maxPersonas) {
-    alert(`❌ La unidad ${unidad} admite entre ${minPersonas} y ${maxPersonas} personas.`);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: `La unidad ${unidad} admite entre ${minPersonas} y ${maxPersonas} personas.`
+    });
     return false;
   }
 
   if (isNaN(fechaIngreso) || fechaIngreso < hoy) {
-    alert("❌ La fecha de ingreso debe ser hoy o una fecha futura.");
+    Swal.fire({
+      icon: 'error',
+      title: 'Error en la fecha de ingreso',
+      text: 'La fecha de ingreso debe ser hoy o una fecha futura.'
+    });
     return false;
   }
 
   if (isNaN(fechaEgreso) || fechaEgreso <= fechaIngreso) {
-    alert("❌ La fecha de egreso debe ser posterior a la de ingreso.");
+    Swal.fire({
+      icon: 'error',
+      title: 'Error en la fecha de egreso',
+      text: 'La fecha de egreso debe ser posterior a la de ingreso.'
+    });
     return false;
   }
 
   if (!retiro) {
-    alert("❌ Debes seleccionar un horario de salida.");
+    Swal.fire({
+      icon: 'warning',
+      title: 'Atención',
+      text: 'Debes seleccionar un horario de salida.'
+    });
     return false;
   }
 
   if (!extra) {
-    alert("❌ Debes seleccionar una opción en '¿Algo que debamos saber?'.");
+    Swal.fire({
+      icon: 'warning',
+      title: 'Atención',
+      text: 'Debes seleccionar una opción en "¿Algo que debamos saber?".'
+    });
     return false;
   }
 
@@ -488,16 +551,20 @@ function validarFormulario(tipo) {
   ];
 
   if (extra === "Camas separadas" && !unidadesConCamasSeparadas.includes(unidad)) {
-    alert(`❌ La unidad ${unidad} no permite la opción 'Camas separadas'.`);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: `La unidad ${unidad} no permite la opción 'Camas separadas'.`
+    });
     return false;
   }
 
   return true;
 }
 
-// =============================
-//         MODALES
-// =============================
+// =============
+//    MODALES
+// =============
 
 function mostrarModalConfirmacion() {
   document.getElementById("modalConfirmacion").style.display = "flex";
@@ -517,7 +584,9 @@ document.getElementById("btnAceptarNoEncontrado").addEventListener("click", () =
   reiniciarVista();
 });
 
+// =====================
 // BASES Y CONDICIONES
+// =====================
 
 document.addEventListener("DOMContentLoaded", () => {
   const btnAbrir = document.getElementById("abrirModalBases");
@@ -535,9 +604,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-
-
 
 // =============================
 // FUNCIONES AUXILIARES
